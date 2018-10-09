@@ -74,7 +74,7 @@ function onPipeEvent(line) {
         }
         displayStatus();
     } else if(line === "activate") {
-        if(navOffsetR === -1) {
+        if(navOffset === -1) {
             //back button
             leaveCurrentMode();
             let obj = navLoc.pop();
