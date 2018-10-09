@@ -1,0 +1,49 @@
+# simi3 example i3 configuration file
+# by default, the i3 configuration is found in ~/.config/i3/config
+
+# the bar block is responsible for launching i3bar.
+# there should already be one in your configuration file.
+# in your bar block, you need to change the status command
+# to point to your simi3.js file.
+bar {
+        #status_command i3status
+        status_command ~/path/to/simi3/simi3.js
+}
+
+# declare a variable that points to the location of the named pipe
+# which is used to tell simi3 to perform actions.
+# the variable makes it easier to change this path later,
+# as it will be used for every keyboard shortcut.
+set $simi3_pipe_loc /home/\(username\)/.local/share/simi3/simi3.fifo
+
+# the "modeswitch" command tells the script to switch i3 to the
+# bar control mode. the bar control mode is called "bar" by default.
+# it's name can be changed in simi3.js. directly changing the mode
+# will not work, as the script will not realize that is has changed.
+bindsym $mod+b exec echo "modeswitch" > $simi3_pipe_loc
+
+# controls in bar mode
+mode "bar" {
+
+        # emergancy mode toggle.
+        # use to return to default mode if the simi3 breaks.
+        # not recommended for normal use.
+        bindsym $mod+Shift+b mode "default"
+
+        # correctly return to default mode
+        bindsym $mod+b exec echo "modeswitch" > $simi3_pipe_loc
+
+        # move cursor to the previous entry of the bar
+        bindsym Left exec echo "prev" > $simi3_pipe_loc
+
+        # move cursor to the next entry of the bar
+        bindsym Right exec echo "next" > $simi3_pipe_loc
+
+        # activate an entry / enter a sub-menu
+        bindsym Return exec echo "activate" > $simi3_pipe_loc
+
+        # return to the previous menu
+        # if there is no prevous menu, exit bar mode
+        bindsym Escape exec echo "ret" > $simi3_pipe_loc
+
+}
