@@ -59,7 +59,7 @@ function onPipeEvent(line) {
         displayStatus();
     } else if(line === "prev") {
         let maxId = findHighestActivatableId();
-        if(navOffset > 0) {
+        if(navOffset > 0 || (navOffset > -1 && navLoc.length > 0)) {
             navOffset--;
         } else {
             navOffset = maxId;
@@ -68,15 +68,23 @@ function onPipeEvent(line) {
     } else if(line === "next") {
         let maxId = findHighestActivatableId();
         if(navOffset === maxId) {
-            navOffset = 0;
+            navOffset = navLoc.length > 0 ? -1 : 0;
         } else {
             navOffset++;
         }
         displayStatus();
     } else if(line === "activate") {
-        let i = navOffset;
-        navOffset = 0;
-        activateActivatable(i);
+        if(navOffsetR === -1) {
+            //back button
+            leaveCurrentMode();
+            let obj = navLoc.pop();
+            navOffset = obj.offset;
+            enterMode(obj.mode);
+        } else {
+            let i = navOffset;
+            navOffset = 0;
+            activateActivatable(i);
+        }
     } else if(line === "ret") {
         if(navLoc.length === 0) {
             child_process.exec("i3-msg \"mode \\\"default\\\"\"");
@@ -107,7 +115,6 @@ clickReadline.on("line", line => {
     if(line.startsWith("[")) return;
     if(line.startsWith(",")) line = line.substr(1);
     let data = JSON.parse(line);
-    log.write(JSON.stringify(data));
     if(data.name === "simi3-back") {
         //back button was clicked, go back to previous menu
         leaveCurrentMode();
@@ -228,9 +235,13 @@ function displayStatus() {
     if(navLoc.length > 0) {
         //display the back button
         components.push({
-            full_text: " Back ",
-            color: "#aaaaaa",
-            name: "simi3-back"
+            full_text: navOffset === -1 ? 
+                "<span color=\"#ffaaaa\" bgcolor=\"#880000\">[</span>" +
+                "<span color=\"#aaaaaa\">Back</span>" +
+                "<span color=\"#ffaaaa\" bgcolor=\"#880000\">]</span>" : 
+                "<span color=\"#aaaaaa\"> Back </span>",
+            name: "simi3-back",
+            markup: "pango"
         });
     }
     currentModeSchedules.forEach(e => {
