@@ -107,10 +107,19 @@ clickReadline.on("line", line => {
     if(line.startsWith("[")) return;
     if(line.startsWith(",")) line = line.substr(1);
     let data = JSON.parse(line);
-    let theId = parseInt(data.name);
-    let oldMode = CONFIG.modes[currentMode];
-    if(oldMode.contents[theId].activatable) {
-        activateActivatable(currentModeSchedules[theId].activatableId);
+    log.write(JSON.stringify(data));
+    if(data.name === "simi3-back") {
+        //back button was clicked, go back to previous menu
+        leaveCurrentMode();
+        let obj = navLoc.pop();
+        navOffset = obj.offset;
+        enterMode(obj.mode);
+    } else {
+        let theId = parseInt(data.name);
+        let oldMode = CONFIG.modes[currentMode];
+        if(oldMode.contents[theId].activatable) {
+            activateActivatable(currentModeSchedules[theId].activatableId);
+        }
     }
 });
 
@@ -221,7 +230,7 @@ function displayStatus() {
         components.push({
             full_text: " Back ",
             color: "#aaaaaa",
-            identifier: "simi3-back"
+            name: "simi3-back"
         });
     }
     currentModeSchedules.forEach(e => {
