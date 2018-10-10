@@ -78,19 +78,19 @@ module.exports = {
             contents: [
                 {
                     activatable: true,
-                    activateAction: ["exec", "modeback"],
+                    activateAction: ["exec", "modeback", "leavebarmode"],
                     execCommand: "xfce4-terminal --command=top",
                     generator: DefaultGenerators.PlainText("Top")
                 },
                 {
                     activatable: true,
-                    activateAction: ["exec", "modeback"],
+                    activateAction: ["exec", "modeback", "leavebarmode"],
                     execCommand: "xfce4-terminal --command=htop",
                     generator: DefaultGenerators.PlainText("Htop")
                 },
                 {
                     activatable: true,
-                    activateAction: ["exec", "modeback"],
+                    activateAction: ["exec", "modeback", "leavebarmode"],
                     execCommand: "xfce4-taskmanager",
                     generator: DefaultGenerators.PlainText("Task Manager")
                 },

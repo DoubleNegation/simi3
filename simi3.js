@@ -357,6 +357,11 @@ function doActivateAction(actionName, barComponent, activatableId) {
         loop();
     } else if(actionName === "exec") {
         child_process.exec(barComponent.execCommand);
+    } else if(actionName === "leavebarmode") {
+        if(inBarNavMode) {
+            child_process.exec("i3-msg \"mode \\\"default\\\"\"");
+            inBarNavMode = false;
+        }
     }
 }
 
