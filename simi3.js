@@ -80,6 +80,7 @@ function onPipeEvent(line) {
             let obj = navLoc.pop();
             navOffset = obj.offset;
             enterMode(obj.mode);
+            loop();
         } else {
             let i = navOffset;
             navOffset = 0;
