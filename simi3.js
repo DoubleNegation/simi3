@@ -122,6 +122,7 @@ clickReadline.on("line", line => {
         let obj = navLoc.pop();
         navOffset = obj.offset;
         enterMode(obj.mode);
+        loop();
     } else {
         let theId = parseInt(data.name);
         let oldMode = CONFIG.modes[currentMode];
@@ -331,21 +332,31 @@ function activateActivatable(activatableId) {
         }
     });
     let cobj = CONFIG.modes[currentMode].contents[obj.id];
-    if(cobj.activateAction === "modeswitch") {
+    if(cobj.activateAction instanceof Array) {
+        cobj.activateAction.forEach(e => {
+            doActivateAction(e, cobj, activatableId);
+        });
+    } else {
+        doActivateAction(cobj.activateAction, cobj, activatableId);
+    }
+}
+
+function doActivateAction(actionName, barComponent, activatableId) {
+    if(actionName === "modeswitch") {
         navLoc.push({mode:currentMode,offset:activatableId});
         leaveCurrentMode();
-        enterMode(cobj.modeswitchGoal);
+        enterMode(barComponent.modeswitchGoal);
         displayStatus();
         loop();
-    } else if(cobj.activateAction === "modeback") {
+    } else if(actionName === "modeback") {
         let to = navLoc.pop();
         navOffset = to.offset;
         leaveCurrentMode();
         enterMode(to.mode);
         displayStatus();
         loop();
-    } else if(cobj.activateAction === "exec") {
-        child_process.exec(cobj.execCommand);
+    } else if(actionName === "exec") {
+        child_process.exec(barComponent.execCommand);
     }
 }
 
