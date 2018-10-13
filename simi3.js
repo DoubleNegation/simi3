@@ -133,7 +133,31 @@ clickReadline.on("line", line => {
     if(line.startsWith("[")) return;
     if(line.startsWith(",")) line = line.substr(1);
     let data = JSON.parse(line);
-    if(data.name === "simi3-back") {
+    if(data.button === 4) {
+        //scroll up
+        if(data.name === "simi3-back") return;
+        let id = parseInt(data.name);
+        let modeCfg = CONFIG.modes[currentMode].contents[id];
+        if(modeCfg.activatable && modeCfg.type === "spinner") {
+            let schedule = currentModeSchedules[id];
+            if(schedule.spinnerIndex < schedule.latestResult.length - 1) {
+                schedule.spinnerIndex++;
+                displayStatus();
+            }
+        }
+    } else if(data.button === 5) {
+        //scroll down
+        if(data.name === "simi3-back") return;
+        let id = parseInt(data.name);
+        let modeCfg = CONFIG.modes[currentMode].contents[id];
+        if(modeCfg.activatable && modeCfg.type === "spinner") {
+            let schedule = currentModeSchedules[id];
+            if(schedule.spinnerIndex > 0) {
+                schedule.spinnerIndex--;
+                displayStatus();
+            }
+        }
+    } else if(data.name === "simi3-back") {
         //back button was clicked, go back to previous menu
         leaveCurrentMode();
         let obj = navLoc.pop();
@@ -269,7 +293,7 @@ function displayStatus() {
     if(navLoc.length > 0) {
         //display the back button
         components.push({
-            full_text: navOffset === -1 ? 
+            full_text: navOffset === -1 && inBarNavMode ? 
                 "<span color=\"#ffaaaa\" bgcolor=\"#880000\">[</span>" +
                 "<span color=\"#aaaaaa\">Back</span>" +
                 "<span color=\"#ffaaaa\" bgcolor=\"#880000\">]</span>" : 
