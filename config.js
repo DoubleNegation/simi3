@@ -41,11 +41,12 @@ module.exports = {
                     generator: DefaultGenerators.Wifi("wlp3s0", false)
                 },
                 {
+                    type: "spinner",
                     activatable: true,
                     activateAction: "modeswitch",
                     modeswitchGoal: "test",
                     schedule: -1,
-                    generator: DefaultGenerators.PlainText("Test")
+                    generator: DefaultGenerators.TestSpinner()
                 },
                 {
                     activatable: false,

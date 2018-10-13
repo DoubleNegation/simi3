@@ -97,6 +97,23 @@ module.exports = {
             }
             return returnValue;
         }
+    },
+    TestSpinner: function mkTestSpinnerGenerator() {
+        return async function testSpinnerGenerator() {
+            return [[{
+                text: "Test 1"
+            }],[{
+                text: "Test 2"
+            }],[{
+                text: "Adventurous ",
+                color: "green"
+            },{
+                text: "Test",
+                color: "blue"
+            }],[{
+                text: "Test 4"
+            }]];
+        }
     }
 };
 

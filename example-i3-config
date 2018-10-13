@@ -39,6 +39,10 @@ mode "bar" {
         # move cursor to the next entry of the bar
         bindsym Right exec echo "next" > $simi3_pipe_loc
 
+        # previous / next value of a spinner
+        bindsym Up exec echo "inc" > $simi3_pipe_loc
+        bindsym Down exec echo "dec" > $simi3_pipe_loc
+
         # activate an entry / enter a sub-menu
         bindsym Return exec echo "activate" > $simi3_pipe_loc
 

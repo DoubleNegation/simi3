@@ -98,6 +98,20 @@ function onPipeEvent(line) {
             loop();
         }
         displayStatus();
+    } else if(line === "inc") {
+        let schedule = currentModeSchedules[navOffset];
+        if(CONFIG.modes[currentMode].contents[schedule.id].type !== "spinner") return;
+        if(schedule.spinnerIndex < schedule.latestResult.length - 1) {
+            schedule.spinnerIndex++;
+            displayStatus();
+        }
+    } else if(line === "dec") {
+        let schedule = currentModeSchedules[navOffset];
+        if(CONFIG.modes[currentMode].contents[schedule.id].type !== "spinner") return;
+        if(schedule.spinnerIndex > 0) {
+            schedule.spinnerIndex--;
+            displayStatus();
+        }
     }
 }
 
@@ -187,7 +201,15 @@ function loop() {
             schedule.currentActivity.then(result => {
                 schedule.counter = 1;
                 schedule.currentActivity = undefined;
-                schedule.latestResult = textComponentToPangoMarkup(result);
+                let cfg = CONFIG.modes[currentMode].contents[schedule.id];
+                if(cfg.type === "spinner") {
+                    schedule.latestResult = [];
+                    result.forEach(e => {
+                        schedule.latestResult.push(textComponentToPangoMarkup(e));
+                    });
+                } else {
+                    schedule.latestResult = textComponentToPangoMarkup(result);
+                }
                 displayStatus();
             });
             schedule.currentActivity.start();
@@ -216,15 +238,19 @@ function enterMode(modeId) {
     let mode = CONFIG.modes[modeId];
     let activatableCounter = 0;
     mode.contents.forEach((content, index) => {
-        currentModeSchedules.push({
+        let schedule = {
             schedule: content.schedule,
             counter: -2,
             generator: content.generator,
             currentActivity: undefined,
-            latestResult: "...",
+            latestResult: content.type === "spinner" ? ["..."] : "...",
             id: index,
             activatableId: content.activatable ?  activatableCounter++ : -1
-        });
+        };
+        if(content.type === "spinner") {
+            schedule.spinnerIndex = 0;
+        }
+        currentModeSchedules.push(schedule);
     });
     currentMode = modeId;
 }
@@ -247,18 +273,43 @@ function displayStatus() {
         });
     }
     currentModeSchedules.forEach(e => {
-        if(inBarNavMode && navOffset === e.activatableId) {
-            components.push({
-                full_text: "<span color=\"#ffaaaa\" bgcolor=\"#880000\">[</span>" + 
-                    e.latestResult + 
-                    "<span color=\"#ffaaaa\" bgcolor=\"#880000\">]</span>",
-                markup: "pango",
-                name: "" + e.id
-            });
+        let cfg = CONFIG.modes[currentMode].contents[e.id];
+        if(!cfg.type || cfg.type === "default") {
+            if(inBarNavMode && navOffset === e.activatableId) {
+                components.push({
+                    full_text: "<span color=\"#ffaaaa\" bgcolor=\"#880000\">[</span>" + 
+                        e.latestResult + 
+                        "<span color=\"#ffaaaa\" bgcolor=\"#880000\">]</span>",
+                    markup: "pango",
+                    name: "" + e.id
+                });
+            } else {
+                components.push({
+                    full_text: " " + e.latestResult + " ",
+                    markup: "pango",
+                    name: "" + e.id
+                });
+            }
+        } else if(cfg.type === "spinner") {
+            if(inBarNavMode && navOffset === e.activatableId) {
+                components.push({
+                    full_text: "<span color=\"#ffaaaa\" bgcolor=\"#880000\">[</span>" + 
+                        e.latestResult[e.spinnerIndex] + 
+                        "<span color=\"#ffaaaa\" bgcolor=\"#880000\">&#8593;&#8595;]</span>",
+                    markup: "pango",
+                    name: "" + e.id
+                });
+            } else {
+                components.push({
+                    full_text: " " + e.latestResult[e.spinnerIndex] + "&#8593;&#8595; ",
+                    markup: "pango",
+                    name: "" + e.id
+                });
+            }
         } else {
             components.push({
-                full_text: " " + e.latestResult + " ",
-                markup: "pango",
+                full_text: " ERROR: unknown type \"" + cfg.type + "\" ",
+                color: "#ff0000",
                 name: "" + e.id
             });
         }
@@ -291,7 +342,7 @@ class Activity {
                     });
                 }
             } catch(e) {
-                log.write(e.toString());
+                log.write(e.toString() + "\n");
             }
         };
         this.thenfuncs = [];
