@@ -100,19 +100,27 @@ module.exports = {
     },
     TestSpinner: function mkTestSpinnerGenerator() {
         return async function testSpinnerGenerator() {
-            return [[{
-                text: "Test 1"
-            }],[{
-                text: "Test 2"
-            }],[{
-                text: "Adventurous ",
-                color: "green"
-            },{
-                text: "Test",
-                color: "blue"
-            }],[{
-                text: "Test 4"
-            }]];
+            return [{
+                value: "test1",
+                display: [{
+                    text: "Test 1"
+            }]},{
+                value: "test2",
+                display: [{
+                    text: "Test 2"
+            }]},{
+                value: "test3",
+                display: [{
+                    text: "Adventurous ",
+                    color: "green"
+                },{
+                    text: "Test",
+                    color: "blue"
+            }]},{
+                value: "test4",
+                display: [{
+                    text: "Test 4"
+            }]}];
         }
     }
 };

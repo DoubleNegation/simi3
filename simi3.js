@@ -204,8 +204,10 @@ function loop() {
                 let cfg = CONFIG.modes[currentMode].contents[schedule.id];
                 if(cfg.type === "spinner") {
                     schedule.latestResult = [];
+                    schedule.spinnerValues = [];
                     result.forEach(e => {
-                        schedule.latestResult.push(textComponentToPangoMarkup(e));
+                        schedule.latestResult.push(textComponentToPangoMarkup(e.display));
+                        schedule.spinnerValues.push(e.value);
                     });
                 } else {
                     schedule.latestResult = textComponentToPangoMarkup(result);
@@ -395,11 +397,11 @@ function activateActivatable(activatableId) {
             doActivateAction(e, cobj, activatableId);
         });
     } else {
-        doActivateAction(cobj.activateAction, cobj, activatableId);
+        doActivateAction(cobj.activateAction, cobj, activatableId, obj);
     }
 }
 
-function doActivateAction(actionName, barComponent, activatableId) {
+function doActivateAction(actionName, barComponent, activatableId, highlightedSchedule) {
     if(actionName === "modeswitch") {
         navLoc.push({mode:currentMode,offset:activatableId});
         leaveCurrentMode();
@@ -420,6 +422,13 @@ function doActivateAction(actionName, barComponent, activatableId) {
             child_process.exec("i3-msg \"mode \\\"default\\\"\"");
             inBarNavMode = false;
         }
+    } else if(actionName === "modeswitchtospinnervalue") {
+        navLoc.push({mode:currentMode,offset:activatableId});
+        let to = highlightedSchedule.spinnerValues[highlightedSchedule.spinnerIndex];
+        leaveCurrentMode();
+        enterMode(to);
+        displayStatus();
+        loop();
     }
 }
 

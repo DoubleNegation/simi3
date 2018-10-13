@@ -43,7 +43,7 @@ module.exports = {
                 {
                     type: "spinner",
                     activatable: true,
-                    activateAction: "modeswitch",
+                    activateAction: "modeswitchtospinnervalue",
                     modeswitchGoal: "test",
                     schedule: -1,
                     generator: DefaultGenerators.TestSpinner()
@@ -65,13 +65,43 @@ module.exports = {
                 }
             ]
         },
-        test: {
+        test1: {
             contents: [
                 {
                     activatable: true,
                     activateAction: "modeback",
                     schedule: -1,
-                    generator: DefaultGenerators.PlainText("THIS IS THE TEST MENU. IT EXISTS FOR TESTING PURPOSES ONLY")
+                    generator: DefaultGenerators.PlainText("This is test menu number 1.")
+                }
+            ]
+        },
+        test2: {
+            contents: [
+                {
+                    activatable: true,
+                    activateAction: "modeback",
+                    schedule: -1,
+                    generator: DefaultGenerators.PlainText("This is test menu number 2.")
+                }
+            ]
+        },
+        test3: {
+            contents: [
+                {
+                    activatable: true,
+                    activateAction: "modeback",
+                    schedule: -1,
+                    generator: DefaultGenerators.PlainText("This is test menu number 3 (the adventurous one).")
+                }
+            ]
+        },
+        test4: {
+            contents: [
+                {
+                    activatable: true,
+                    activateAction: "modeback",
+                    schedule: -1,
+                    generator: DefaultGenerators.PlainText("This is test menu number 4.")
                 }
             ]
         },
