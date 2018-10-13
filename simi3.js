@@ -99,14 +99,14 @@ function onPipeEvent(line) {
         }
         displayStatus();
     } else if(line === "inc") {
-        let schedule = currentModeSchedules[navOffset];
+        let schedule = getScheduleObjectByActivatableId(navOffset);
         if(CONFIG.modes[currentMode].contents[schedule.id].type !== "spinner") return;
         if(schedule.spinnerIndex < schedule.latestResult.length - 1) {
             schedule.spinnerIndex++;
             displayStatus();
         }
     } else if(line === "dec") {
-        let schedule = currentModeSchedules[navOffset];
+        let schedule = getScheduleObjectByActivatableId(navOffset);
         if(CONFIG.modes[currentMode].contents[schedule.id].type !== "spinner") return;
         if(schedule.spinnerIndex > 0) {
             schedule.spinnerIndex--;
@@ -375,13 +375,20 @@ function textComponentToPangoMarkup(comp) {
     return converted;
 }
 
+function getScheduleObjectByActivatableId(activatableId) {
+    try {
+        currentModeSchedules.forEach(e => {
+            if(e.activatableId === activatableId) {
+                throw e;
+            }
+        });
+    } catch(schedule) {
+        return schedule;
+    }
+}
+
 function activateActivatable(activatableId) {
-    let obj;
-    currentModeSchedules.forEach(e => {
-        if(e.activatableId === activatableId) {
-            obj = e;
-        }
-    });
+    let obj = getScheduleObjectByActivatableId(activatableId);
     let cobj = CONFIG.modes[currentMode].contents[obj.id];
     if(cobj.activateAction instanceof Array) {
         cobj.activateAction.forEach(e => {
