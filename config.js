@@ -78,8 +78,7 @@ module.exports = {
         test2: {
             contents: [
                 {
-                    activatable: true,
-                    activateAction: "modeback",
+                    activatable: false,
                     schedule: -1,
                     generator: DefaultGenerators.PlainText("This is test menu number 2.")
                 }

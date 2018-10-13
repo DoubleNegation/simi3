@@ -85,6 +85,9 @@ function onPipeEvent(line) {
             let i = navOffset;
             navOffset = 0;
             activateActivatable(i);
+            if(findHighestActivatableId() === -1) {
+                navOffset = -1;
+            }
         }
     } else if(line === "ret") {
         if(navLoc.length === 0) {
@@ -142,6 +145,7 @@ clickReadline.on("line", line => {
         let oldMode = CONFIG.modes[currentMode];
         if(oldMode.contents[theId].activatable) {
             activateActivatable(currentModeSchedules[theId].activatableId);
+            navOffset = findHighestActivatableId() === -1 ? -1 : 0;
         }
     }
 });
@@ -247,7 +251,7 @@ function enterMode(modeId) {
             currentActivity: undefined,
             latestResult: content.type === "spinner" ? ["..."] : "...",
             id: index,
-            activatableId: content.activatable ?  activatableCounter++ : -1
+            activatableId: content.activatable ? activatableCounter++ : -2
         };
         if(content.type === "spinner") {
             schedule.spinnerIndex = 0;
@@ -321,7 +325,7 @@ function displayStatus() {
 
 function findHighestActivatableId() {
     for(let i = currentModeSchedules.length - 1; i >= 0; i--) {
-        if(currentModeSchedules[i].activatableId !== -1) {
+        if(currentModeSchedules[i].activatableId !== -2) {
             return currentModeSchedules[i].activatableId;
         }
     }
