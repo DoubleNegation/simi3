@@ -301,13 +301,18 @@ function displayStatus() {
                 components.push({
                     full_text: "<span color=\"#ffaaaa\" bgcolor=\"#880000\">[</span>" + 
                         e.latestResult[e.spinnerIndex] + 
-                        "<span color=\"#ffaaaa\" bgcolor=\"#880000\">&#8593;&#8595;]</span>",
+                        "<span color=\"#ffaaaa\" bgcolor=\"#880000\">" +
+                        (e.spinnerIndex === e.latestResult.length - 1 ? " " : "&#8593;") +
+                        (e.spinnerIndex === 0 ? " " : "&#8595;") +
+                        "]</span>",
                     markup: "pango",
                     name: "" + e.id
                 });
             } else {
                 components.push({
-                    full_text: " " + e.latestResult[e.spinnerIndex] + "&#8593;&#8595; ",
+                    full_text: " " + e.latestResult[e.spinnerIndex] +
+                        (e.spinnerIndex === e.latestResult.length - 1 ? " " : "&#8593;") +
+                        (e.spinnerIndex === 0 ? " " : "&#8595;") + " ",
                     markup: "pango",
                     name: "" + e.id
                 });
