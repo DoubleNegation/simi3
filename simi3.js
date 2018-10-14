@@ -477,6 +477,24 @@ function doActivateAction(actionName, barComponent, activatableId, highlightedSc
     } else if(actionName === "execspinnervalue") {
         child_process.exec(highlightedSchedule.spinnerValues[highlightedSchedule.spinnerIndex]);
         return false;
+    } else if(actionName === "refreshthis") {
+        //immediately runs the generator for the activated element
+        if(highlightedSchedule.counter !== -1) {
+            highlightedSchedule.counter = -2;
+            loop();
+            displayStatus();
+        }
+        return false;
+    } else if(actionName === "refreshall") {
+        //immediately runs all the generatos for all displayed elements
+        currentModeSchedules.forEach(schedule => {
+            if(schedule.counter !== -1) {
+                schedule.counter = -2;
+            }
+        });
+        loop();
+        displayStatus();
+        return false;
     }
 }
 

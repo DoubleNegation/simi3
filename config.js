@@ -67,7 +67,7 @@ module.exports = {
                 {
                     type: "spinner",
                     activatable: true,
-                    activateAction: "execspinnervalue",
+                    activateAction: ["execspinnervalue", "refreshthis"],
                     schedule: 2,
                     generator: DefaultGenerators.DisconnectNetworkDevice()
                 },
