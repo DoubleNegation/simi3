@@ -59,9 +59,24 @@ module.exports = {
             contents: [
                 {
                     activatable: true,
-                    activateAction: "modeback",
+                    activateAction: "exec",
+                    execCommand: "nm-connection-editor",
                     schedule: -1,
-                    generator: DefaultGenerators.PlainText("Yay, you found the wifi menu!")
+                    generator: DefaultGenerators.PlainText("Connection Editor")
+                },
+                {
+                    type: "spinner",
+                    activatable: true,
+                    activateAction: "execspinnervalue",
+                    schedule: 2,
+                    generator: DefaultGenerators.DisconnectNetworkDevice()
+                },
+                {
+                    type: "spinner",
+                    activatable: true,
+                    activateAction: "execspinnervalue",
+                    schedule: 20,
+                    generator: DefaultGenerators.ActivateNetworkConnection()
                 }
             ]
         },

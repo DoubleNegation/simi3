@@ -98,6 +98,44 @@ module.exports = {
             return returnValue;
         }
     },
+    DisconnectNetworkDevice: function mkDisconnectNetworkDeviceGenerator() {
+        return async function disconnectNetworkDeviceGenerator() {
+            let data = (await myExec("nmcli device")).stdout.split("\n");
+            let devices = [];
+            data.forEach(e => {
+                let tokens = e.trim().split(/\s\s+/g);
+                if(tokens[2] === "connected") {
+                    devices.push(tokens[0]);
+                }
+            });
+            let returnValue = [];
+            devices.forEach(e => {
+                returnValue.push({
+                    value: "nmcli device disconnect " + e,
+                    display: [{
+                        text: "Disconnect " + e
+                    }]
+                });
+            });
+            return returnValue;
+        }
+    },
+    ActivateNetworkConnection: function mkActivateNetworkConnectionGenerator() {
+        return async function activateNetworkConnectionGenerator() {
+            let data = (await myExec("nmcli connection")).stdout.split("\n").slice(1, -1);
+            let returnValue = [];
+            data.forEach(e => {
+                let tokens = e.trim().split(/\s\s+/g);
+                returnValue.push({
+                    value: "nmcli connection up \"" + tokens[0].replace(/"/g, "\\\"") + "\"",
+                    display: [{
+                        text: "Activate connection \"" + tokens[0] + "\""
+                    }]
+                });
+            });
+            return returnValue;
+        }
+    },
     TestSpinner: function mkTestSpinnerGenerator() {
         return async function testSpinnerGenerator() {
             return [{
