@@ -83,10 +83,9 @@ function onPipeEvent(line) {
             loop();
         } else {
             let i = navOffset;
-            navOffset = 0;
-            activateActivatable(i);
-            if(findHighestActivatableId() === -1) {
-                navOffset = -1;
+            if(activateActivatable(navOffset)) {
+                navOffset = findHighestActivatableId() === -1 ? -1 : 0;
+                displayStatus();
             }
         }
     } else if(line === "ret") {
@@ -168,8 +167,10 @@ clickReadline.on("line", line => {
         let theId = parseInt(data.name);
         let oldMode = CONFIG.modes[currentMode];
         if(oldMode.contents[theId].activatable) {
-            activateActivatable(currentModeSchedules[theId].activatableId);
-            navOffset = findHighestActivatableId() === -1 ? -1 : 0;
+            if(activateActivatable(currentModeSchedules[theId].activatableId)) {
+                navOffset = findHighestActivatableId() === -1 ? -1 : 0;
+                displayStatus();
+            }
         }
     }
 });
@@ -422,18 +423,24 @@ function getScheduleObjectByActivatableId(activatableId) {
     }
 }
 
+//returns true if the cursor needs to be reset
 function activateActivatable(activatableId) {
     let obj = getScheduleObjectByActivatableId(activatableId);
     let cobj = CONFIG.modes[currentMode].contents[obj.id];
     if(cobj.activateAction instanceof Array) {
+        let returnValue = false;
         cobj.activateAction.forEach(e => {
-            doActivateAction(e, cobj, activatableId);
+            if(doActivateAction(e, cobj, activatableId)) {
+                returnValue = true;
+            }
         });
+        return returnValue;
     } else {
-        doActivateAction(cobj.activateAction, cobj, activatableId, obj);
+        return doActivateAction(cobj.activateAction, cobj, activatableId, obj);
     }
 }
 
+//retrns true if the cursor needs to be reset
 function doActivateAction(actionName, barComponent, activatableId, highlightedSchedule) {
     if(actionName === "modeswitch") {
         navLoc.push({mode:currentMode,offset:activatableId});
@@ -441,6 +448,7 @@ function doActivateAction(actionName, barComponent, activatableId, highlightedSc
         enterMode(barComponent.modeswitchGoal);
         displayStatus();
         loop();
+        return true;
     } else if(actionName === "modeback") {
         let to = navLoc.pop();
         navOffset = to.offset;
@@ -448,13 +456,16 @@ function doActivateAction(actionName, barComponent, activatableId, highlightedSc
         enterMode(to.mode);
         displayStatus();
         loop();
+        return false;
     } else if(actionName === "exec") {
         child_process.exec(barComponent.execCommand);
+        return false;
     } else if(actionName === "leavebarmode") {
         if(inBarNavMode) {
             child_process.exec("i3-msg \"mode \\\"default\\\"\"");
             inBarNavMode = false;
         }
+        return false;
     } else if(actionName === "modeswitchtospinnervalue") {
         navLoc.push({mode:currentMode,offset:activatableId});
         let to = highlightedSchedule.spinnerValues[highlightedSchedule.spinnerIndex];
@@ -462,8 +473,10 @@ function doActivateAction(actionName, barComponent, activatableId, highlightedSc
         enterMode(to);
         displayStatus();
         loop();
+        return true;
     } else if(actionName === "execspinnervalue") {
         child_process.exec(highlightedSchedule.spinnerValues[highlightedSchedule.spinnerIndex]);
+        return false;
     }
 }
 
