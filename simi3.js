@@ -430,7 +430,7 @@ function activateActivatable(activatableId) {
     if(cobj.activateAction instanceof Array) {
         let returnValue = false;
         cobj.activateAction.forEach(e => {
-            if(doActivateAction(e, cobj, activatableId)) {
+            if(doActivateAction(e, cobj, activatableId, obj)) {
                 returnValue = true;
             }
         });
