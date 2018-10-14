@@ -117,6 +117,14 @@ module.exports = {
                     }]
                 });
             });
+            if(returnValue.length === 0) {
+                returnValue.push({
+                    value: "echo \"\"",
+                    display: [{
+                        text: "(no connected devices found)"
+                    }]
+                });
+            }
             return returnValue;
         }
     },
@@ -133,6 +141,14 @@ module.exports = {
                     }]
                 });
             });
+            if(returnValue.length === 0) {
+                returnValue.push({
+                    value: "echo \"\"",
+                    display: [{
+                        text: "(no connections found)"
+                    }]
+                });
+            }
             return returnValue;
         }
     },
