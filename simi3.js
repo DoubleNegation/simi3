@@ -462,6 +462,8 @@ function doActivateAction(actionName, barComponent, activatableId, highlightedSc
         enterMode(to);
         displayStatus();
         loop();
+    } else if(actionName === "execspinnervalue") {
+        child_process.exec(highlightedSchedule.spinnerValues[highlightedSchedule.spinnerIndex]);
     }
 }
 
