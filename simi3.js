@@ -158,6 +158,7 @@ clickReadline.on("line", line => {
         }
     } else if(data.name === "simi3-back" || data.button === 3) {
         //back button or RMB was clicked, go back to previous menu
+        if(navLoc.length === 0) return;
         leaveCurrentMode();
         let obj = navLoc.pop();
         navOffset = obj.offset;
