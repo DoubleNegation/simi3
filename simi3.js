@@ -105,6 +105,7 @@ function onPipeEvent(line) {
         if(CONFIG.modes[currentMode].contents[schedule.id].type !== "spinner") return;
         if(schedule.spinnerIndex < schedule.latestResult.length - 1) {
             schedule.spinnerIndex++;
+            doScrollAction(schedule.id);
             displayStatus();
         }
     } else if(line === "dec") {
@@ -112,6 +113,7 @@ function onPipeEvent(line) {
         if(CONFIG.modes[currentMode].contents[schedule.id].type !== "spinner") return;
         if(schedule.spinnerIndex > 0) {
             schedule.spinnerIndex--;
+            doScrollAction(schedule.id);
             displayStatus();
         }
     }
@@ -141,6 +143,7 @@ clickReadline.on("line", line => {
             let schedule = currentModeSchedules[id];
             if(schedule.spinnerIndex < schedule.latestResult.length - 1) {
                 schedule.spinnerIndex++;
+                doScrollAction(id);
                 displayStatus();
             }
         }
@@ -153,6 +156,7 @@ clickReadline.on("line", line => {
             let schedule = currentModeSchedules[id];
             if(schedule.spinnerIndex > 0) {
                 schedule.spinnerIndex--;
+                doScrollAction(modeCfg);
                 displayStatus();
             }
         }
@@ -235,10 +239,13 @@ function loop() {
                 if(cfg.type === "spinner") {
                     schedule.latestResult = [];
                     schedule.spinnerValues = [];
-                    result.forEach(e => {
+                    let targetIndex = 0;
+                    result.forEach((e, i) => {
                         schedule.latestResult.push(textComponentToPangoMarkup(e.display));
                         schedule.spinnerValues.push(e.value);
+                        if(e.defaultSelection) targetIndex = i;
                     });
+                    if(schedule.spinnerIndex === -1) schedule.spinnerIndex = targetIndex;
                 } else {
                     schedule.latestResult = textComponentToPangoMarkup(result);
                 }
@@ -280,7 +287,7 @@ function enterMode(modeId) {
             activatableId: content.activatable ? activatableCounter++ : -2
         };
         if(content.type === "spinner") {
-            schedule.spinnerIndex = 0;
+            schedule.spinnerIndex = -1;
         }
         currentModeSchedules.push(schedule);
     });
@@ -438,6 +445,26 @@ function activateActivatable(activatableId) {
         return returnValue;
     } else {
         return doActivateAction(cobj.activateAction, cobj, activatableId, obj);
+    }
+}
+
+//returns true if the cursor needs to be reset
+function doScrollAction(id) {
+    let content = CONFIG.modes[currentMode].contents[id];
+    let schedule = currentModeSchedules[id];
+    let activatebleId = schedule.activatableId;
+    let action = content.scrollAction;
+    if(!action) return;
+    if(action instanceof Array) {
+        let returnValue = false;
+        action.forEach(e => {
+            if(doActivateAction(e, content, activatebleId, schedule)) {
+                returnValue = true;
+            }
+        });
+        return returnValue;
+    } else {
+        return doActivateAction(action, content, activatableId, schedule);
     }
 }
 

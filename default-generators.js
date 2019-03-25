@@ -10,10 +10,12 @@
 
 //require the node modules that the generators need
 const child_process = require("child_process");
+const fs = require("fs");
 const util = require("util");
 
 //constants that are needed by some of the generators
 const myExec = util.promisify(child_process.exec);
+const readFile = util.promisify(fs.readFile);
 
 //add a foreach function to the array that can work in async functions
 //and allows for breaking to save cpu time.
@@ -175,6 +177,26 @@ module.exports = {
                 display: [{
                     text: "Test 4"
             }]}];
+        }
+    },
+    BrightnessSpinner: function mkBrightnessSpinnerGenerator(backlightIdentifier) {
+        return async function brightnessSpinnerGenerator() {
+            const backlightLocation = "/sys/class/backlight/" + backlightIdentifier + "/";
+            const brightness = backlightLocation + "brightness";
+            const maxBrightness = backlightLocation + "max_brightness";
+            let bright = parseInt(await readFile(brightness, "ascii"));
+            let maxBright = parseInt(await readFile(maxBrightness, "ascii"));
+            let percentage = Math.round(100 * bright / maxBright);
+            let arr = [];
+            for(let i = 0; i <= 100; i++) {
+                arr.push({
+                    value: "echo " + Math.round(i / 100 * maxBright) + " > " + brightness,
+                    defaultSelection: i === percentage,
+                    display: [{
+                        text: "Brightness: " + i + "%"
+                }]});
+            }
+            return arr;
         }
     }
 };

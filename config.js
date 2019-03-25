@@ -49,6 +49,13 @@ module.exports = {
                     generator: DefaultGenerators.TestSpinner()
                 },
                 {
+                    type: "spinner",
+                    activatable: true,
+                    schedule: -1,
+                    generator: DefaultGenerators.BrightnessSpinner("intel_backlight"),
+                    scrollAction: ["execspinnervalue", "refreshthis"]
+                },
+                {
                     activatable: false,
                     schedule: 1,
                     generator: DefaultGenerators.DateTime()
