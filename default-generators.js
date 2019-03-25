@@ -154,31 +154,6 @@ module.exports = {
             return returnValue;
         }
     },
-    TestSpinner: function mkTestSpinnerGenerator() {
-        return async function testSpinnerGenerator() {
-            return [{
-                value: "test1",
-                display: [{
-                    text: "Test 1"
-            }]},{
-                value: "test2",
-                display: [{
-                    text: "Test 2"
-            }]},{
-                value: "test3",
-                display: [{
-                    text: "Adventurous ",
-                    color: "green"
-                },{
-                    text: "Test",
-                    color: "blue"
-            }]},{
-                value: "test4",
-                display: [{
-                    text: "Test 4"
-            }]}];
-        }
-    },
     BrightnessSpinner: function mkBrightnessSpinnerGenerator(backlightIdentifier) {
         return async function brightnessSpinnerGenerator() {
             const backlightLocation = "/sys/class/backlight/" + backlightIdentifier + "/";

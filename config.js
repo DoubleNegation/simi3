@@ -43,17 +43,9 @@ module.exports = {
                 {
                     type: "spinner",
                     activatable: true,
-                    activateAction: "modeswitchtospinnervalue",
-                    modeswitchGoal: "test",
-                    schedule: -1,
-                    generator: DefaultGenerators.TestSpinner()
-                },
-                {
-                    type: "spinner",
-                    activatable: true,
                     schedule: -1,
                     generator: DefaultGenerators.BrightnessSpinner("intel_backlight"),
-                    scrollAction: ["execspinnervalue", "refreshthis"]
+                    scrollAction: ["execspinnervalue"]
                 },
                 {
                     activatable: false,
