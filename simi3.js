@@ -156,7 +156,7 @@ clickReadline.on("line", line => {
             let schedule = currentModeSchedules[id];
             if(schedule.spinnerIndex > 0) {
                 schedule.spinnerIndex--;
-                doScrollAction(modeCfg);
+                doScrollAction(id);
                 displayStatus();
             }
         }
