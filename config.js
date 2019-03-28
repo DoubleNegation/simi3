@@ -49,6 +49,11 @@ module.exports = {
                 },
                 {
                     activatable: false,
+                    schedule: 20,
+                    generator: DefaultGenerators.BatteryStatus("BAT1")
+                },
+                {
+                    activatable: false,
                     schedule: 1,
                     generator: DefaultGenerators.DateTime()
                 }

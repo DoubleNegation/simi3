@@ -173,6 +173,26 @@ module.exports = {
             }
             return arr;
         }
+    },
+    BatteryStatus: function mkBatteryStatusGenerator(batteryIdentifier) {
+        return async function batteryStatusGenerator() {
+            const batteryLocation = "/sys/class/power_supply/" + batteryIdentifier + "/";
+            const charge = batteryLocation + "charge_now";
+            const maxCharge = batteryLocation + "charge_full";
+            let now = parseInt(await readFile(charge, "ascii"));
+            let full = parseInt(await readFile(maxCharge, "ascii"));
+            let percentage = Math.round(100 * now / full);
+            let color;
+            if(percentage > 40) color = "#00ff00";
+            else if(percentage > 30) color = "#b4ff00";
+            else if(percentage > 20) color = "#ffe500";
+            else if(percentage > 10) color = "#ff7900";
+            else color = "#ff3600";
+            return [{
+                text: batteryIdentifier + ": " + percentage + "%",
+                color: color
+            }];
+        }
     }
 };
 
