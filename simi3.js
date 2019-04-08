@@ -168,7 +168,7 @@ clickReadline.on("line", line => {
         navOffset = obj.offset;
         enterMode(obj.mode);
         loop();
-    } else {
+    } else if(data.button === 1) {
         let theId = parseInt(data.name);
         let oldMode = CONFIG.modes[currentMode];
         if(oldMode.contents[theId].activatable) {
