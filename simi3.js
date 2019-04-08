@@ -29,6 +29,9 @@ const PIPE_LOC = "/home/(username)/.local/share/simi3/simi3.fifo";
 //if an error is thrown inside a generator, it is written to the log.
 const LOG_LOC = "/home/(username)/.local/share/simi3/simi3.log"; 
 
+//command to use for the spinner option choosing menu
+const SPINNER_MENU_COMMAND = "dmenu -b -l 20";
+
 /*** CONFIGURATION SECTION END ***/
 
 //if the pipe does not exist, create it
@@ -116,6 +119,10 @@ function onPipeEvent(line) {
             doScrollAction(schedule.id);
             displayStatus();
         }
+    } else if(line === "spinnermenu") {
+        let schedule = getScheduleObjectByActivatableId(navOffset);
+        if(CONFIG.modes[currentMode].contents[schedule.id].type !== "spinner") return;
+        showSpinnerMenu(schedule.id);
     }
 }
 
@@ -168,7 +175,16 @@ clickReadline.on("line", line => {
         navOffset = obj.offset;
         enterMode(obj.mode);
         loop();
+    } else if(data.button === 2) {
+        //choose spinner value
+        if(data.name === "simi3-back") return;
+        let id = parseInt(data.name);
+        let modeCfg = CONFIG.modes[currentMode].contents[id];
+        if(modeCfg.type === "spinner") {
+            showSpinnerMenu(id);
+        }
     } else if(data.button === 1) {
+        //activate
         let theId = parseInt(data.name);
         let oldMode = CONFIG.modes[currentMode];
         if(oldMode.contents[theId].activatable) {
@@ -526,4 +542,19 @@ function doActivateAction(actionName, barComponent, activatableId, highlightedSc
     }
 }
 
+function showSpinnerMenu(id) {
+    let schedule = currentModeSchedules[id];
+    let options = schedule.latestResult;
+    let prettyOptions = [];
+    options.forEach(option => {
+        prettyOptions.push(option.replace(/<.*?>/g, "").replace(/&quot;/g, "\"").replace(/&lt;/g, "<").replace(/%gt;/g, ">"));
+    });
+    let proc = child_process.exec(SPINNER_MENU_COMMAND, (error, stdout, stderr) => {
+        schedule.spinnerIndex = prettyOptions.indexOf(stdout.substring(0, stdout.length - 1));
+        doScrollAction(id);
+        displayStatus();
+    });
+    proc.stdin.write(prettyOptions.join("\n") + "\n");
+    proc.stdin.end();
+}
 
