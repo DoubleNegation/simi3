@@ -550,9 +550,12 @@ function showSpinnerMenu(id) {
         prettyOptions.push(option.replace(/<.*?>/g, "").replace(/&quot;/g, "\"").replace(/&lt;/g, "<").replace(/%gt;/g, ">"));
     });
     let proc = child_process.exec(SPINNER_MENU_COMMAND, (error, stdout, stderr) => {
-        schedule.spinnerIndex = prettyOptions.indexOf(stdout.substring(0, stdout.length - 1));
-        doScrollAction(id);
-        displayStatus();
+        let input = stdout.substring(0, stdout.length - 1);
+        if(prettyOptions.includes(input)) {
+            schedule.spinnerIndex = prettyOptions.indexOf(input);
+            doScrollAction(id);
+            displayStatus();
+        }
     });
     proc.stdin.write(prettyOptions.join("\n") + "\n");
     proc.stdin.end();
